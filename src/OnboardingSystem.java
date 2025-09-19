@@ -148,7 +148,7 @@ public class OnboardingSystem {
 
 
 
-        String startDate = InputHandler.getNonEmptyString("Start date (yyyy-mm-dd): ");
+        String startDate = InputHandler.getValidDate("Start date (yyyy-mm-dd): ");
         String role = InputHandler.getNonEmptyString("Role: ");
 
         Employee emp = new Employee(firstName, lastName, email, startDate, role);

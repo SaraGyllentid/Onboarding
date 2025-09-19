@@ -1,3 +1,6 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class InputHandler {
@@ -72,5 +75,31 @@ public class InputHandler {
             System.out.println("Invalid email. Format must be text@text.text with no spaces.");
         }
     }
+
+
+    public static String getValidDate(String prompt) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine();
+            if (input != null) {
+                String trimmed = input.trim();
+                try {
+                    LocalDate date = LocalDate.parse(trimmed, formatter);
+                    LocalDate today = LocalDate.now();
+
+                    if (!date.isBefore(today)) {
+                        return trimmed;
+                    } else {
+                        System.out.println("Date cannot be earlier than today (" + today + ").");
+                    }
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid date. Format must be yyyy-mm-dd (example: 2025-09-19).");
+                }
+            }
+        }
+    }
+
 
 }
