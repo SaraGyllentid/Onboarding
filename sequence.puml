@@ -1,0 +1,121 @@
+@startuml
+' Gör diagrammet tydligt på mörka IDE-teman
+skinparam BackgroundColor White
+skinparam defaultFontName Monospaced
+skinparam ArrowColor Black
+skinparam SequenceMessageAlign center
+skinparam ParticipantBorderColor Black
+skinparam ParticipantBackgroundColor #F5F7FA
+skinparam SequenceLifeLineBorderColor Black
+skinparam SequenceLifeLineBackgroundColor #F5F7FA
+skinparam NoteBackgroundColor #FFFFCC
+skinparam NoteBorderColor Black
+skinparam LifelineStrategy solid
+
+title Onboarding flow: Add employee → Manage → Contract → Devices → Complete
+
+actor User
+participant "OnboardingSystem" as OS
+participant "InputHandler" as IH
+participant "EmployeeRegistry" as ER
+participant "Employee" as Emp
+participant "inventory: List<Device>" as Inv
+participant "Device" as Dev
+participant "Contract" as C
+
+' ========== 1) ADD EMPLOYEE ==========
+== Add Employee ==
+User -> OS: Select "1. Add employee"
+OS -> IH: getNonEmptyString(First/Last/Email/Start/Role)
+IH --> OS: values
+OS -> ER: generateUniqueEmail(firstName,lastName,"company.com")
+ER -> ER: normalizeNamePart/normalizeSurname\n+ emailExists(..) until unique
+ER --> OS: workEmail
+OS -> Emp: new Employee(..., onboardingDone=false)
+OS -> Emp: setWorkEmail(workEmail)
+OS -> ER: addEmployee(Emp)
+OS --> User: "Employee created: First Last (workEmail)"
+
+' ========== 2) MANAGE EMPLOYEE ==========
+== Manage Employee ==
+User -> OS: Select "3. Manage employee"
+OS -> IH: getNonEmptyString("Search for name")
+IH --> OS: query
+OS -> ER: searchByName(query)
+ER --> OS: [0/1/n] matches
+
+alt 0 matches
+  OS --> User: "Employee not found"
+else 1 match
+  OS -> Emp: employeeMenu(Emp)
+else multiple
+  OS --> User: Show numbered list (sorted A–Ö)
+  User -> OS: Pick index
+  OS -> Emp: employeeMenu(chosen Emp)
+end
+
+' ========== 3) EMPLOYEE MENU ACTIONS ==========
+== Employee menu ==
+User -> OS: Choose "1. Sign contract"
+alt no contract yet
+  OS -> C: new Contract("Employment", Emp)
+  OS -> C: sign()
+  OS -> Emp: setContract(C)
+  OS --> User: "Contract signed"
+else contract exists
+  alt already signed
+    OS --> User: "Already signed"
+  else not signed yet
+    OS -> C: sign()
+    OS --> User: "Contract signed"
+  end
+end
+
+User -> OS: Choose "2. Assign devices"
+OS -> Inv: list only available (isLoaned=false)
+OS --> User: Show options (1..n)
+loop each selected number
+  OS -> Dev: assignTo(Emp)\n(set loaned=true, borrowerName/Email)
+  OS -> Emp: addDevice(Dev)
+end
+OS --> User: "Assigned X to First Last"
+
+User -> OS: Choose "4. Mark onboarding as done"
+OS -> Emp: hasSignedContract()
+alt not signed
+  OS --> User: "Sign contract first"
+else signed
+  OS -> Emp: hasAtLeastOneDevice()
+  alt 0 devices
+    OS --> User: "Assign at least one device"
+  else ok
+    OS -> Emp: setOnboardingDone(true)
+    OS --> User: "Onboarding is marked as done"
+  end
+end
+
+' ========== 4) DEVICE ADMIN MENU ==========
+== Device Administration (main → 4. Devices) ==
+User -> OS: deviceMenu()
+User -> OS: 1. List all
+OS -> Inv: sort(type, identifier)
+OS --> User: "#. Device [type=.., identifier=..] | Available/Loaned to Name (email)"
+
+User -> OS: 2. Add new
+OS -> IH: getNonEmptyString(type), getNonEmptyString(identifier)
+IH --> OS: values
+OS -> Inv: add(new Device(type, identifier))
+OS --> User: "Device added"
+
+User -> OS: 3. Remove
+OS --> User: Show list with numbers
+User -> OS: Pick index
+OS -> Dev: isLoaned?
+alt loaned
+  OS --> User: "Cannot remove, device is loaned"
+else
+  OS -> Inv: remove(Dev)
+  OS --> User: "Device removed"
+end
+
+@enduml
