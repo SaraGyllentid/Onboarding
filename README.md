@@ -23,14 +23,3 @@ src/main/java/
 ├── Contract.java
 └── InputHandler.java
 
-## 1. Klona projektet
-```bash
-git clone git@github.com:SaraGyllentid/Onboarding.git
-cd Onboarding
-
-mkdir -p out
-javac -d out src/*.java
-
-java -cp out Main
-
----

@@ -17,16 +17,21 @@ public class InputHandler {
         }
     }
     public static int getInt(String prompt) {
-        System.out.println(prompt);
-        while (!scanner.hasNextInt()) {
-            System.out.println("Please enter a number");
-            scanner.nextLine();
-            System.out.println(prompt);
+        while (true) {
+            System.out.print(prompt);
+            String line = scanner.nextLine();
+            if (line == null || line.trim().isEmpty()) {
+                System.out.println("Please enter a number.");
+                continue;
+            }
+            try {
+                return Integer.parseInt(line.trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number. Try again.");
+            }
         }
-        int i = scanner.nextInt();
-        scanner.nextLine();
-        return i;
     }
+
     //för att kunna ändra användare men om inget ändras behåll gamla
     public static String getLineAllowEmpty(String prompt) {
         System.out.print(prompt);
