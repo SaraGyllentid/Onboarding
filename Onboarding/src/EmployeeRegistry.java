@@ -4,7 +4,6 @@ import java.util.List;
 public class EmployeeRegistry {
 
     private final ArrayList<Employee> employees;
-
     public EmployeeRegistry() {
         this.employees = new ArrayList<>();
     }
@@ -42,7 +41,7 @@ public class EmployeeRegistry {
     //lista alla employees
     public void printEmployees() {
         System.out.println("----------Employees----------");
-        if (employees.isEmpty()) {
+        if(employees.isEmpty()) {
             System.out.println("No employees found");
             return;
         }
@@ -55,9 +54,8 @@ public class EmployeeRegistry {
         });
         int index = 1;
         for (Employee employee : employees) {
-            String status;
-            if (employee.isOnboardingDone()) {
-                status = "Done";
+            String status; if(employee.isOnboardingDone()) {
+                status ="Done";
             } else {
                 status = "Pending";
             }
@@ -95,28 +93,20 @@ public class EmployeeRegistry {
             index++;
         }
     }
-
     //Koll om det redan finns en email
     public boolean emailExists(String email) {
-        if (email == null) {
-            return false;
-        }
+        if (email == null) {return false;}
         for (Employee employee : employees) {
             String p = employee.getEmail();
             String w = employee.getWorkEmail();
-            if (p != null && p.equalsIgnoreCase(email)) {
-                return true;
-            }
-            if (w != null && w.equalsIgnoreCase(email)) {
-                return true;
-            }
+            if (p != null && p.equalsIgnoreCase(email)) {return true;}
+            if (w != null && w.equalsIgnoreCase(email)) {return true;}
         }
         return false;
     }
-
     public String generateUniqueEmail(String firstName, String lastName, String domain) {
         String baseFirst = normalizeNamePart(firstName);  // a–z, 0–9
-        String baseLast = normalizeSurname(lastName);    // flera efternamn -> punktseparerat
+        String baseLast  = normalizeSurname(lastName);    // flera efternamn -> punktseparerat
 
         String base = baseFirst + "." + baseLast;         // t.ex. "anna.af.akker"
         String candidate = base + "@" + domain;
@@ -131,18 +121,15 @@ public class EmployeeRegistry {
 
 
     private String normalizeNamePart(String s) {
-        if (s == null) {
+        if (s== null) {
             return "";
         }
-        String lower = s.toLowerCase();
+        String lower  = s.toLowerCase();
         lower = replaceNordic(lower);
         return lower.replaceAll("[^a-z0-9]", "");
     }
-
     private String normalizeSurname(String s) {
-        if (s == null) {
-            return "";
-        }
+        if (s == null) { return ""; }
         String lower = s.toLowerCase();
         lower = replaceNordic(lower);
         // splitta på whitespace, normalisera varje del, och join:a med punkt
@@ -162,14 +149,12 @@ public class EmployeeRegistry {
         }
         return result;
     }
-
     private String replaceNordic(String s) {
         return s
-                .replace('å', 'a').replace('Å', 'A')
-                .replace('ä', 'a').replace('Ä', 'A')
-                .replace('ö', 'o').replace('Ö', 'O');
+                .replace('å','a').replace('Å','A')
+                .replace('ä','a').replace('Ä','A')
+                .replace('ö','o').replace('Ö','O');
     }
-
     // Kolla om en email redan finns hos någon annan
     public boolean emailExistsForOther(String email, Employee current) {
         if (email == null) return false;

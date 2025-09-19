@@ -16,6 +16,7 @@ public class InputHandler {
             System.out.println("Input is empty. Please try again.");
         }
     }
+
     public static int getInt(String prompt) {
         while (true) {
             System.out.print(prompt);
@@ -38,6 +39,38 @@ public class InputHandler {
         String in = scanner.nextLine();
         if (in == null) return "";
         return in.trim(); // kan vara tom sträng = behåll gamla värdet
+    }
+// --- Validation ---
+
+    public static String getValidName(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine();
+            if (input != null) {
+                String trimmed = input.trim();
+                // Tillåt a–z, A–Z, åäöÅÄÖ, mellanslag och bindestreck
+                if (!trimmed.isEmpty() && trimmed.matches("[a-zA-ZåäöÅÄÖ\\s-]+")) {
+                    return trimmed;
+                }
+            }
+            System.out.println("Invalid name. Only letters, spaces and hyphens are allowed.");
+        }
+    }
+
+
+    public static String getValidEmail(String prompt) {
+        String regex = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine();
+            if (input != null) {
+                String trimmed = input.trim();
+                if (trimmed.matches(regex)) {
+                    return trimmed;
+                }
+            }
+            System.out.println("Invalid email. Format must be text@text.text with no spaces.");
+        }
     }
 
 }

@@ -25,7 +25,6 @@ public class Employee {
         this.devices = new ArrayList<>();
         this.contract = null;
     }
-
     //ospecificerad onboarddingstatus
     public Employee(String firstName, String lastName, String email, String startDate, String role, boolean onboardingDone) {
         this.firstName = firstName;
@@ -38,23 +37,17 @@ public class Employee {
         this.workEmail = null;
         this.contract = null;
     }
-
     public void addDevice(Device device) {
         this.devices.add(device);
     }
-
     public void removeDevice(Device device) {
         this.devices.remove(device);
     }
-
-    public List<Device> getDevices() {
-        return devices;
-    }
+    public List<Device> getDevices() {return devices;}
 
     public String getFirstName() {
         return firstName;
     }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -62,7 +55,6 @@ public class Employee {
     public String getLastName() {
         return lastName;
     }
-
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -70,7 +62,6 @@ public class Employee {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -78,7 +69,6 @@ public class Employee {
     public String getStartDate() {
         return startDate;
     }
-
     public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
@@ -86,11 +76,9 @@ public class Employee {
     public String getRole() {
         return role;
     }
-
     public void setRole(String role) {
         this.role = role;
     }
-
     public boolean isOnboardingDone() {
         return onboardingDone;
     }
@@ -102,32 +90,29 @@ public class Employee {
     public String getWorkEmail() {
         return workEmail;
     }
-
     public void setWorkEmail(String workEmail) {
         this.workEmail = workEmail;
     }
-
     public Contract getContract() {
         return contract;
     }
-
     public void setContract(Contract contract) {
         this.contract = contract;
     }
-
     public boolean hasSignedContract() {
         if (contract == null) {
             return false;
         }
         return contract.isSigned();
     }
-
     public boolean hasAtLeastOneDevice() {
         if (devices == null) {
             return false;
         }
         return !devices.isEmpty();
     }
+
+
 
 
 }

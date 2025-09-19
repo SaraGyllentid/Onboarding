@@ -10,21 +10,11 @@ public class Contract {
         this.employee = employee;
     }
 
-    public String getType() {
-        return type;
-    }
+    public String getType() { return type; }
+    public boolean isSigned() { return signed; }
 
-    public boolean isSigned() {
-        return signed;
-    }
-
-    public void sign() {
-        this.signed = true;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
+    public void sign() {this.signed = true;}
+    public Employee getEmployee() { return employee; }
 
     public void setType(String type) {
         this.type = type;

@@ -20,6 +20,7 @@ public class OnboardingSystem {
     private final List<Device> inventory;
 
 
+
     public OnboardingSystem() {
         this.registry = new EmployeeRegistry();
         // ---------Sample data
@@ -79,7 +80,6 @@ public class OnboardingSystem {
         johanna.setOnboardingDone(true);
 
     }
-
     //kör programmet
     public void run() {
         //körs till man väljer exit
@@ -97,9 +97,9 @@ public class OnboardingSystem {
                             employee.getFirstName(), employee.getLastName(), employee.getWorkEmail());
                     break;
                 case 2:
-                    //lista alla employees
-                    registry.printEmployees();
-                    break;
+                     //lista alla employees
+                     registry.printEmployees();
+                     break;
                 case 3:
                     //Hantera onboarding-menu
                     manageEmployeeByName();
@@ -111,16 +111,15 @@ public class OnboardingSystem {
                     printAllContracts();
                     break;
                 case 6:
-                    System.out.println("Programmet stängs ner.");
-                    return;
-                default:
-                    System.out.println("Invalid choice. Choose a number between 1 and 4");
-                    break;
+                        System.out.println("Programmet stängs ner.");
+                        return;
+                        default:
+                            System.out.println("Invalid choice. Choose a number between 1 and 4");
+                            break;
 
             }
         }
     }
-
     private void printMenu() {
         System.out.println("---------------------------------\n" + "---------Onboarding Menu:--------");
         System.out.println("1. Add employee");
@@ -131,15 +130,14 @@ public class OnboardingSystem {
         System.out.println("6. Exit");
 
     }
-
     // Skapar employee utan devices
     private Employee createEmployee() {
-        String firstName = InputHandler.getValidName("First name: ");
-        String lastName  = InputHandler.getValidName("Last name: ");
+        String firstName =InputHandler.getNonEmptyString("First name: ");
+        String lastName =InputHandler.getNonEmptyString("Last name: ");
 
         String email;
         while (true) {
-            email = InputHandler.getValidEmail("Email: ");
+            email = InputHandler.getNonEmptyString("Email: ");
             if (!registry.emailExists(email)) {
                 break;
             }
@@ -147,11 +145,10 @@ public class OnboardingSystem {
         }
 
 
+        String startDate =InputHandler.getNonEmptyString("Start date (yyyy-mm-dd): ");
+        String role =InputHandler.getNonEmptyString("Role: ");
 
-        String startDate = InputHandler.getNonEmptyString("Start date (yyyy-mm-dd): ");
-        String role = InputHandler.getNonEmptyString("Role: ");
-
-        Employee emp = new Employee(firstName, lastName, email, startDate, role);
+       Employee emp = new Employee(firstName, lastName, email, startDate, role);
         String workEmail = registry.generateUniqueEmail(firstName, lastName, "company.com");
         emp.setWorkEmail(workEmail);
         System.out.printf("Generated work email: %s\n", emp.getWorkEmail());
@@ -186,14 +183,14 @@ public class OnboardingSystem {
                 } else {
                     status = "Pending";
                 }
-                System.out.printf("%d. %s %s (%s) | Onboarding: %s\n", index, employee.getFirstName(), employee.getLastName(), employee.getWorkEmail(), status);
+                System.out.printf("%d. %s %s | Onboarding: %s\n",index, employee.getFirstName(), employee.getLastName(), status);
                 index++;
             }
 
         }
 
         int pick = InputHandler.getInt("Select a number: ");
-        if (pick == 0) {
+        if( pick == 0){
             System.out.println("Canceled.");
             return;
         }
@@ -207,8 +204,8 @@ public class OnboardingSystem {
 
     //undermeny anställd
     private void employeeMenu(Employee employee) {
-        while (true) {
-            if (employee.isOnboardingDone()) {
+        while(true){
+            if(employee.isOnboardingDone()) {
                 System.out.printf("Onboarding for %s is already done.\n", employee.getFirstName());
                 return;
             } else {
@@ -243,7 +240,7 @@ public class OnboardingSystem {
                 switch (choice) {
                     case 1:
                         if (employee.getContract() == null) {
-                            Contract c = new Contract("Employment", employee);
+                            Contract c = new Contract("Employment",employee);
                             c.sign();
                             employee.setContract(c);
                             System.out.printf("Contract signed for %s %s%n", employee.getFirstName(), employee.getLastName());
@@ -258,11 +255,10 @@ public class OnboardingSystem {
                         }
                         break;
                     case 2:
-
+                        System.out.printf("Assign devices for %s\n",employee.getFirstName());
                         assignDevicesToEmployee(employee);
                         break;
                     case 3:
-                        removeDevicesFromEmployee(employee);
                         break;
                     case 4:
                         if (!employee.hasSignedContract()) {
@@ -287,7 +283,7 @@ public class OnboardingSystem {
                     case 6:
                         System.out.println("Returning...");
                         return;
-                    default:
+                        default:
                         System.out.println("Invalid choice. Choose a number between 1 and 6");
                         break;
                 }
@@ -303,17 +299,16 @@ public class OnboardingSystem {
             return;
         }
         for (Device d : employee.getDevices()) {
-            System.out.println(" - " + d.toString());
+            System.out.println(" - " +  d.toString());
         }
     }
-
     private void assignDevicesToEmployee(Employee employee) {
         List<Integer> selectableIndexes = new ArrayList<>();
         int displayIndex = 1;
         System.out.println("Available devices: ");
-        for (int i = 0; i < inventory.size(); i++) {
+        for (int i = 0;i < inventory.size();i++) {
             Device d = inventory.get(i);
-            if (!d.isLoaned()) {
+            if ( !d.isLoaned()) {
                 System.out.printf("%d. %s\n", displayIndex, d.toString());
                 selectableIndexes.add(i);
                 displayIndex++;
@@ -338,95 +333,26 @@ public class OnboardingSystem {
                     break;
                 }
             }
-            if (!isNumber) {
-                System.out.println("Invalid number: " + trimmed);
-                continue;
-            }
-            int pickNumber = Integer.parseInt(trimmed);
-            if (pickNumber < 1 || pickNumber > selectableIndexes.size()) {
-                System.out.println("Invalid input:" + trimmed);
-                continue;
-            }
-            int inventoryIndex = selectableIndexes.get(pickNumber - 1);
-            Device chosenDevice = inventory.get(inventoryIndex);
-            if (chosenDevice.isLoaned()) {
-                System.out.printf("Device %s is loaned to %s", chosenDevice.toString(), chosenDevice.getBorrowerName());
-            } else {
-                employee.addDevice(chosenDevice);
-                chosenDevice.assignTo(employee);
-                System.out.printf("Assigned %s to %s", chosenDevice.toString(), chosenDevice.getBorrowerName());
+        if (!isNumber) {
+            System.out.println("Invalid number: " + trimmed);
+            continue;
+        }
+        int pickNumber = Integer.parseInt(trimmed);
+        if (pickNumber < 1 || pickNumber > selectableIndexes.size()) {
+            System.out.println("Invalid input:" + trimmed);
+            continue;
+        }
+        int inventoryIndex = selectableIndexes.get(pickNumber -1);
+        Device chosenDevice = inventory.get(inventoryIndex);
+        if (chosenDevice.isLoaned()) {
+            System.out.printf("Device %s is loaned to %s",chosenDevice.toString(),chosenDevice.getBorrowerName());
+        } else {
+            employee.addDevice(chosenDevice);
+            chosenDevice.assignTo(employee);
+            System.out.printf("Assigned %s to %s", chosenDevice.toString(), chosenDevice.getBorrowerName());
             }
         }
     }
-
-
-    private void removeDevicesFromEmployee(Employee employee) {
-        // 1) Om personen inte har devices, avbryt
-        if (employee.getDevices().isEmpty()) {
-            System.out.println("This employee has no devices to remove.");
-            return;
-        }
-
-        // 2) Visa numrerad lista över devices som personen har
-        System.out.printf("Devices for %s %s:%n", employee.getFirstName(), employee.getLastName());
-        for (int i = 0; i < employee.getDevices().size(); i++) {
-            Device d = employee.getDevices().get(i);
-            System.out.printf("%d. %s%n", i + 1, d.toString());
-        }
-
-        // 3) Låt användaren välja vilka nummer som ska tas bort (komma-separerat)
-        String raw = InputHandler.getNonEmptyString("Enter number(s) to remove (comma-separated). 0 cancels: ");
-        if (raw.equals("0")) {
-            System.out.println("Canceled.");
-            return;
-        }
-
-        String[] parts = raw.split(",");
-        boolean removedAny = false;
-
-        // 4) Gå igenom varje inmatat nummer
-        for (String p : parts) {
-            String trimmed = p.trim();
-            if (trimmed.isEmpty()) {
-                System.out.println("Empty value ignored.");
-                continue;
-            }
-
-            // Tillåt bara siffror (ingen try/catch som du önskade)
-            boolean isNumber = true;
-            for (int i = 0; i < trimmed.length(); i++) {
-                if (!Character.isDigit(trimmed.charAt(i))) {
-                    isNumber = false;
-                    break;
-                }
-            }
-            if (!isNumber) {
-                System.out.println("Invalid number: " + trimmed);
-                continue;
-            }
-
-            int pick = Integer.parseInt(trimmed);
-            if (pick < 1 || pick > employee.getDevices().size()) {
-                System.out.println("Out of range: " + trimmed);
-                continue;
-            }
-
-            // 5) Hämta device (index = pick-1), ta bort från employee och ”unassigna” på device
-            Device toRemove = employee.getDevices().get(pick - 1);
-            // Viktigt: först frigör device, sedan ta bort kopplingen i employee
-            toRemove.unassign();            // markerar enheten som ledig
-            employee.removeDevice(toRemove);
-            System.out.printf("Removed %s from %s %s%n",
-                    toRemove.toString(), employee.getFirstName(), employee.getLastName());
-            removedAny = true;
-        }
-
-        if (!removedAny) {
-            System.out.println("No devices were removed.");
-        }
-    }
-
-
     private void printDeviceInventory() {
         if (inventory.isEmpty()) {
             System.out.println("No inventory found.");
@@ -452,7 +378,6 @@ public class OnboardingSystem {
             i++;
         }
     }
-
     private void printAllContracts() {
         List<Employee> employees = registry.getEmployees();
         employees.sort((a, b) -> {
@@ -572,7 +497,7 @@ public class OnboardingSystem {
 
         // 1) Namn
         String newFirst = InputHandler.getLineAllowEmpty("New first name (leave empty to keep): ");
-        String newLast = InputHandler.getLineAllowEmpty("New last name  (leave empty to keep): ");
+        String newLast  = InputHandler.getLineAllowEmpty("New last name  (leave empty to keep): ");
 
         boolean nameChanged = false;
         if (!newFirst.isEmpty() && !newFirst.equals(e.getFirstName())) {
